@@ -1,9 +1,10 @@
 <?php
-require('class/connect.php');
-require('class/functions.php');
-$lur=islogin();
-$loginin=$lur['username'];
-$rnd=$lur['rnd'];
+require("class/connect.php");
+include("class/config.php");
+include("class/functions.php");
+$loginin=getcvar('bakusername');
+$rnd=getcvar('bakrnd');
+islogin($loginin,$rnd);
 //第一次使用
 if(empty($phome_db_ver))
 {

@@ -1,8 +1,10 @@
 <?php
-require('class/connect.php');
-require('class/functions.php');
-$lur=islogin();
-$loginin=$lur['username'];
-$rnd=$lur['rnd'];
+require("class/connect.php");
+include("class/config.php");
+include("class/functions.php");
+include("lang/dbchar.php");
+$loginin=getcvar('bakusername');
+$rnd=getcvar('bakrnd');
+islogin($loginin,$rnd);
 require LoadAdminTemp('eadmin.php');
 ?>

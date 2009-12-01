@@ -1,8 +1,9 @@
 <?php
-require('class/connect.php');
-require('class/db_sql.php');
-require('class/functions.php');
-require LoadLang('f.php');
+require("class/connect.php");
+include("class/config.php");
+include("class/db_sql.php");
+include("class/functions.php");
+@include LoadLang('f.php');
 $phome=$_GET['phome'];
 if(empty($phome))
 {$phome=$_POST['phome'];}
@@ -11,11 +12,11 @@ if($phome=="login"||$phome=="ChangeLanguage")
 {}
 else
 {
-	$lur=islogin();
-	$loginin=$lur['username'];
-	$rnd=$lur['rnd'];
+	$loginin=getcvar('bakusername');
+	$rnd=getcvar('bakrnd');
+	islogin($loginin,$rnd);
 }
-if($phome=="SetDb"||$phome=="DoRep"||$phome=="DoOpi"||$phome=="DoDrop"||$phome=="DropDb"||$phome=="CreateDb"||$phome=="EmptyTable"||$phome=="DoSave"||$phome=="DoDelSave"||$phome=="DelBakpath"||$phome=="DelZip"||$phome=="DoExecSql"||$phome=="DoTranExecSql"||$phome=="RepPathFiletext"||$phome=='ReplaceTable')
+if($phome=="SetDb"||$phome=="DoRep"||$phome=="DoOpi"||$phome=="DoDrop"||$phome=="DropDb"||$phome=="CreateDb"||$phome=="EmptyTable"||$phome=="DoSave"||$phome=="DoDelSave"||$phome=="DelBakpath"||$phome=="DelZip"||$phome=="DoExecSql"||$phome=="DoTranExecSql"||$phome=="RepPathFiletext")
 {
 	include("class/combakfun.php");
 }
@@ -26,84 +27,130 @@ else
 	$link=db_connect();
 	$empire=new mysqlquery();
 }
-if($phome=="SetDb")//参数设置
+//参数设置
+if($phome=="SetDb")
 {
 	Ebak_SetDb($_POST);
 }
-elseif($phome=="DoRep")//修复表
+//修复表
+elseif($phome=="DoRep")
 {
 	$tablename=$_POST['tablename'];
 	$mydbname=$_POST['mydbname'];
 	Ebak_Rep($tablename,$mydbname);
 }
-elseif($phome=="DoOpi")//忧化表
+//忧化表
+elseif($phome=="DoOpi")
 {
 	$tablename=$_POST['tablename'];
 	$mydbname=$_POST['mydbname'];
 	Ebak_Opi($tablename,$mydbname);
 }
-elseif($phome=="DoDrop")//删除表
+//删除表
+elseif($phome=="DoDrop")
 {
 	$tablename=$_POST['tablename'];
 	$mydbname=$_POST['mydbname'];
 	Ebak_Drop($tablename,$mydbname);
 }
-elseif($phome=="ReplaceTable")//替换表
-{
-	$tablename=$_POST['tablename'];
-	$mydbname=$_POST['mydbname'];
-	$oldpre=$_POST['oldtablepre'];
-	$newpre=$_POST['newtablepre'];
-	Ebak_ReplaceTable($tablename,$oldpre,$newpre,$mydbname);
-}
-elseif($phome=="DropDb")//删除数据库
+//删除数据库
+elseif($phome=="DropDb")
 {
 	$mydbname=$_GET['mydbname'];
 	Ebak_DropDb($mydbname);
 }
-elseif($phome=="CreateDb")//建立数据库
+//建立数据库
+elseif($phome=="CreateDb")
 {
 	$mydbname=$_POST['mydbname'];
 	$mydbchar=$_POST['mydbchar'];
 	Ebak_CreatDb($mydbname,$mydbchar);
 }
-elseif($phome=="EmptyTable")//清空表
+//清空表
+elseif($phome=="EmptyTable")
 {
 	$tablename=$_POST['tablename'];
 	$mydbname=$_POST['mydbname'];
 	Ebak_EmptyTable($tablename,$mydbname);
 }
-elseif($phome=="exit")//退出系统
+//初使化备份表
+elseif($phome=="DoEbak")
+{
+	Ebak_DoEbak($_POST);
+}
+//备份表(按文件)
+elseif($phome=="BakExe")
+{
+	$t=$_GET['t'];
+	$s=$_GET['s'];
+	$p=$_GET['p'];
+	$mypath=$_GET['mypath'];
+	$alltotal=$_GET['alltotal'];
+	$thenof=$_GET['thenof'];
+	$fnum=$_GET['fnum'];
+	$stime=$_GET['stime'];
+	Ebak_BakExe($t,$s,$p,$mypath,$alltotal,$thenof,$fnum,$stime);
+}
+//备份表(按记录)
+elseif($phome=="BakExeT")
+{
+	$t=$_GET['t'];
+	$s=$_GET['s'];
+	$p=$_GET['p'];
+	$mypath=$_GET['mypath'];
+	$alltotal=$_GET['alltotal'];
+	$thenof=$_GET['thenof'];
+	$fnum=$_GET['fnum'];
+	$auf=$_GET['auf'];
+	$aufval=$_GET['aufval'];
+	$stime=$_GET['stime'];
+	Ebak_BakExeT($t,$s,$p,$mypath,$alltotal,$thenof,$fnum,$auf,$aufval,$stime);
+}
+//恢复数据
+elseif($phome=="ReData")
+{
+	$add=$_POST['add'];
+	$mypath=$_POST['mypath'];
+	Ebak_ReData($add,$mypath);
+}
+//退出系统
+elseif($phome=="exit")
 {
 	LoginOut();
 }
-elseif($phome=="login")//登陆
+//登陆
+elseif($phome=="login")
 {
 	$lusername=$_POST['lusername'];
 	$lpassword=$_POST['lpassword'];
 	$key=$_POST['key'];
 	login($lusername,$lpassword,$key,$lifetime);
 }
-elseif($phome=="DelBakpath")//删除备份目录
+//删除备份目录
+elseif($phome=="DelBakpath")
 {
 	$path=$_GET['path'];
 	Ebak_DelBakpath($path);
 }
-elseif($phome=="DelZip")//删除压缩包
+//删除压缩包
+elseif($phome=="DelZip")
 {
 	$f=$_GET['f'];
 	Ebak_DelZip($f);
 }
-elseif($phome=="DoZip")//压缩目录
+//压缩目录
+elseif($phome=="DoZip")
 {
 	$p=$_GET['p'];
 	Ebak_Dozip($p);
 }
-elseif($phome=="DoExecSql")//执行sql
+//执行sql
+elseif($phome=="DoExecSql")
 {
 	Ebak_DoExecSql($_POST);
 }
-elseif($phome=="DoTranExecSql")//上传执行sql
+//上传执行sql
+elseif($phome=="DoTranExecSql")
 {
 	$file=$_FILES['file']['tmp_name'];
     $file_name=$_FILES['file']['name'];
@@ -111,29 +158,35 @@ elseif($phome=="DoTranExecSql")//上传执行sql
     $file_size=$_FILES['file']['size'];
 	Ebak_DoTranExecSql($file,$file_name,$file_type,$file_size,$_POST);
 }
-elseif($phome=="DoSave")//保存设置
+//保存设置
+elseif($phome=="DoSave")
 {
 	Ebak_SaveSeting($_POST);
 }
-elseif($phome=="DoDelSave")//删除设置
+//删除设置
+elseif($phome=="DoDelSave")
 {
 	Ebak_DelSeting($_GET);
 }
-elseif($phome=="SetGotoBak")//设置转向
+//设置转向
+elseif($phome=="SetGotoBak")
 {
 	$savename=$_GET['savename'];
 	Ebak_SetGotoBak($savename);
 }
-elseif($phome=="PathGotoRedata")//目录转向
+//目录转向
+elseif($phome=="PathGotoRedata")
 {
 	$mypath=$_GET['mypath'];
 	Ebak_PathGotoRedata($mypath);
 }
-elseif($phome=="ChangeLanguage")//选择语言
+//选择语言
+elseif($phome=="ChangeLanguage")
 {
 	Ebak_ChangeLanguage($_GET);
 }
-elseif($phome=="RepPathFiletext")//替换目录文件
+//替换目录文件
+elseif($phome=="RepPathFiletext")
 {
 	Ebak_RepPathFiletext($_POST);
 }
