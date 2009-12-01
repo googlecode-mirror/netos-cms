@@ -1,11 +1,12 @@
 <?php
-require('class/connect.php');
-require('class/db_sql.php');
-require('class/functions.php');
-require LoadLang('f.php');
-$lur=islogin();
-$loginin=$lur['username'];
-$rnd=$lur['rnd'];
+require("class/connect.php");
+include("class/config.php");
+include("class/db_sql.php");
+include("class/functions.php");
+include LoadLang('f.php');
+$loginin=getcvar('bakusername');
+$rnd=getcvar('bakrnd');
+islogin($loginin,$rnd);
 $link=db_connect();
 $empire=new mysqlquery();
 //Ä¬ÈÏÊý¾Ý¿â
@@ -15,6 +16,7 @@ if(!empty($phome_db_dbname))
 	exit();
 }
 $sql=$empire->query("SHOW DATABASES");
+include("lang/dbchar.php");
 require LoadAdminTemp('eChangeDb.php');
 db_close();
 $empire=null;

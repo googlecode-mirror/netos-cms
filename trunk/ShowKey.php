@@ -1,5 +1,6 @@
 <?php
-require('class/connect.php');
+include("class/connect.php");
+include("class/config.php");
 //------------------------------------------------------取得随机数
 function domake_password($pw_length)
 {

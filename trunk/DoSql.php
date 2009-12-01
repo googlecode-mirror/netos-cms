@@ -1,12 +1,14 @@
 <?php
-require('class/connect.php');
-require('class/db_sql.php');
-require('class/functions.php');
-$lur=islogin();
-$loginin=$lur['username'];
-$rnd=$lur['rnd'];
+require("class/connect.php");
+include("class/config.php");
+include("class/db_sql.php");
+include("class/functions.php");
+$loginin=getcvar('bakusername');
+$rnd=getcvar('bakrnd');
+islogin($loginin,$rnd);
 $link=db_connect();
 $empire=new mysqlquery();
+include("lang/dbchar.php");
 $chars=Ebak_ReturnDbCharList('');
 //数据库列表
 $mydbname=$_GET['mydbname'];
